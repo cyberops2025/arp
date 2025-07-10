@@ -26,6 +26,7 @@ int main() {
 
     char* iface_mac = get_iface_mac(raw_sock, test_iface);
     print_mac(iface_mac);
+    free(iface_mac);
 
     close(raw_sock);
 
