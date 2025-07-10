@@ -10,6 +10,8 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+int get_iface_index(int raw_sock, char* iface_name);
+
 int main() {
     
     printf("Here we go...\n");
@@ -22,19 +24,27 @@ int main() {
 
     char* test_iface = "vboxnet0";
 
+    int iface_index = get_iface_index(raw_sock, test_iface);
+    printf("index=%d\n", iface_index);
+
+    close(raw_sock);
+
+    return 0;
+
+}
+
+int get_iface_index(int raw_sock, char* iface_name) {
+
     struct ifreq iface_index;
+
     memset(&iface_index, 0, sizeof(iface_index));
-    strncpy(iface_index.ifr_name, test_iface, IFNAMSIZ-1);
+    strncpy(iface_index.ifr_name, iface_name, IFNAMSIZ-1);
 
     if ((ioctl(raw_sock, SIOCGIFINDEX, &iface_index)) < 0) {
         fprintf(stderr, "ioctl() failed. (%d)\n", errno);
         exit(1);
     }
-
-    printf("index=%d\n", iface_index.ifr_ifindex);
-
-    close(raw_sock);
-
-    return 0;
+    
+    return iface_index.ifr_ifindex;
 
 }
