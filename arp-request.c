@@ -13,6 +13,7 @@
 int get_raw_socket();
 int get_iface_index(int raw_sock, char* iface_name);
 char* get_iface_mac(int raw_sock, char* iface_name);
+void print_mac(char* iface_mac);
 
 int main() {
     
@@ -24,12 +25,8 @@ int main() {
     printf("Interface Index = %d\n", iface_index);
 
     char* iface_mac = get_iface_mac(raw_sock, test_iface);
-    printf("Interface MAC address = ");
-    for (int i = 0; i < 6; i++) {
-        printf("%.2x ", iface_mac[i]);
-    }
-    printf("\n");
-    
+    print_mac(iface_mac);
+
     close(raw_sock);
 
     return 0;
@@ -85,4 +82,14 @@ char* get_iface_mac(int raw_sock, char* iface_name) {
     
     return mac_address;
 
+}
+
+void print_mac(char* iface_mac) {
+
+    printf("Interface MAC address = ");
+    for (int i = 0; i < 6; i++) {
+        printf("%.2x ", iface_mac[i]);
+    }
+    printf("\n");
+    
 }
