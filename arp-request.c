@@ -10,6 +10,7 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+int get_raw_socket();
 int get_iface_index(int raw_sock, char* iface_name);
 char* get_iface_mac(int raw_sock, char* iface_name);
 
@@ -17,13 +18,7 @@ int main() {
     
     char* test_iface = "vboxnet0";
 
-    printf("Here we go...\n");
-
-    int raw_sock = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
-    if (raw_sock == -1) {
-        fprintf(stderr, "socket() failed. (%d)\n", errno);
-        exit(1);
-    }
+    int raw_sock = get_raw_socket();
 
     int iface_index = get_iface_index(raw_sock, test_iface);
     printf("Interface Index = %d\n", iface_index);
@@ -38,6 +33,19 @@ int main() {
     close(raw_sock);
 
     return 0;
+
+}
+
+int get_raw_socket() {
+
+    int raw_sock = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
+
+    if (raw_sock == -1) {
+        fprintf(stderr, "socket() failed. (%d)\n", errno);
+        exit(1);
+    }
+
+    return raw_sock;
 
 }
 
