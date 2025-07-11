@@ -12,19 +12,19 @@
 
 int get_raw_socket();
 int get_iface_index(int raw_sock, char* iface_name);
-char* get_iface_mac(int raw_sock, char* iface_name);
-void print_mac(char* iface_mac);
+unsigned char* get_iface_mac(int raw_sock, char* iface_name);
+void print_mac(unsigned char* iface_mac);
 
-int main() {
+int main(int argc, char* argv[]) {
     
-    char* test_iface = "vboxnet0";
+    char* test_iface = argv[1]; // Need to validate
 
     int raw_sock = get_raw_socket();
 
     int iface_index = get_iface_index(raw_sock, test_iface);
     printf("Interface Index = %d\n", iface_index);
 
-    char* iface_mac = get_iface_mac(raw_sock, test_iface);
+    unsigned char* iface_mac = get_iface_mac(raw_sock, test_iface);
     print_mac(iface_mac);
     free(iface_mac);
 
@@ -63,9 +63,9 @@ int get_iface_index(int raw_sock, char* iface_name) {
 
 }
 
-char* get_iface_mac(int raw_sock, char* iface_name) {
+unsigned char* get_iface_mac(int raw_sock, char* iface_name) {
 
-    char* mac_address = malloc(6 * sizeof(char));
+    unsigned char* mac_address = malloc(6 * sizeof(unsigned char));
 
     struct ifreq iface_mac;
 
@@ -85,7 +85,7 @@ char* get_iface_mac(int raw_sock, char* iface_name) {
 
 }
 
-void print_mac(char* iface_mac) {
+void print_mac(unsigned char* iface_mac) {
 
     printf("Interface MAC address = ");
     for (int i = 0; i < 6; i++) {
