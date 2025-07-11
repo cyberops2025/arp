@@ -3,9 +3,8 @@
 #include "../include/includes.h"
 #include "../include/get_raw_socket.h"
 #include "../include/get_iface_index.h"
-
-unsigned char* get_iface_mac(int raw_sock, char* iface_name);
-void print_mac(unsigned char* iface_mac);
+#include "../include/get_iface_mac.h"
+#include "../include/print_mac.h"
 
 int main(int argc, char* argv[]) {
     
@@ -26,34 +25,3 @@ int main(int argc, char* argv[]) {
 
 }
 
-unsigned char* get_iface_mac(int raw_sock, char* iface_name) {
-
-    unsigned char* mac_address = malloc(6 * sizeof(unsigned char));
-
-    struct ifreq iface_mac;
-
-    memset(&iface_mac, 0, sizeof(iface_mac));
-    strncpy(iface_mac.ifr_name, iface_name, IFNAMSIZ-1);
-
-    if ((ioctl(raw_sock, SIOCGIFHWADDR, &iface_mac)) < 0) {
-        fprintf(stderr, "ioctl() failed. (%d)\n", errno);
-        exit(1);
-    }
-
-    for (int i = 0; i < 6; i++) {
-        mac_address[i] = iface_mac.ifr_hwaddr.sa_data[i];
-    }
-    
-    return mac_address;
-
-}
-
-void print_mac(unsigned char* iface_mac) {
-
-    printf("Interface MAC address = ");
-    for (int i = 0; i < 6; i++) {
-        printf("%.2x ", iface_mac[i]);
-    }
-    printf("\n");
-    
-}
