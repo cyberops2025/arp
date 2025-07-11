@@ -1,14 +1,7 @@
 // Found a useful resource here:
 // https://www.opensourceforu.com/2015/03/a-guide-to-using-raw-sockets/
 
-#include <errno.h>
-#include <netdb.h>
-#include <net/if.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/ioctl.h>
-#include <unistd.h>
+#include "../include/includes.h"
 
 int get_raw_socket();
 int get_iface_index(int raw_sock, char* iface_name);
