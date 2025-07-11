@@ -1,9 +1,8 @@
 // Found a useful resource here:
 // https://www.opensourceforu.com/2015/03/a-guide-to-using-raw-sockets/
-
 #include "../include/includes.h"
+#include "../include/get_raw_socket.h"
 
-int get_raw_socket();
 int get_iface_index(int raw_sock, char* iface_name);
 unsigned char* get_iface_mac(int raw_sock, char* iface_name);
 void print_mac(unsigned char* iface_mac);
@@ -24,19 +23,6 @@ int main(int argc, char* argv[]) {
     close(raw_sock);
 
     return 0;
-
-}
-
-int get_raw_socket() {
-
-    int raw_sock = socket(AF_PACKET, SOCK_RAW, IPPROTO_RAW);
-
-    if (raw_sock == -1) {
-        fprintf(stderr, "socket() failed. (%d)\n", errno);
-        exit(1);
-    }
-
-    return raw_sock;
 
 }
 
