@@ -1,6 +1,7 @@
 #ifndef INCLUDES_H
 #define INCLUDES_H
 
+#include <arpa/inet.h>
 #include <errno.h>
 #include <netdb.h>
 #include <net/if.h>

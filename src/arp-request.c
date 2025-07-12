@@ -5,6 +5,7 @@
 #include "../include/get_iface_index.h"
 #include "../include/get_iface_mac.h"
 #include "../include/print_mac.h"
+#include "../include/get_iface_ip.h"
 
 int main(int argc, char* argv[]) {
     
@@ -18,6 +19,10 @@ int main(int argc, char* argv[]) {
     unsigned char* iface_mac = get_iface_mac(raw_sock, test_iface);
     print_mac(iface_mac);
     free(iface_mac);
+
+    char* ip_address = get_iface_ip(raw_sock, test_iface);
+    printf("IP Address = %s\n", ip_address);
+    free(ip_address);
 
     close(raw_sock);
 
