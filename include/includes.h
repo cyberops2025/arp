@@ -11,5 +11,12 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+struct iface_info {
+    char name[100];
+    int index;
+    unsigned char mac[6];
+    char ip[100];
+};
+
 #endif
 

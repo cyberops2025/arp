@@ -6,10 +6,13 @@
 
 int main(int argc, char* argv[]) {
     
-    char* test_iface = argv[1]; // Need to validate
+    char* iface_arg = argv[1]; // Need to validate
 
     int raw_sock = get_raw_socket();
-    get_and_print_iface_info(raw_sock, test_iface);
+    struct iface_info iface;
+    strncpy(iface.name, iface_arg, strlen(iface_arg)+1);
+
+    get_and_print_iface_info(raw_sock, &iface);
 
     // Craft ethernet packets.
 
