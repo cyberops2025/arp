@@ -15,6 +15,40 @@ int main(int argc, char* argv[]) {
     get_and_print_iface_info(raw_sock, &iface);
 
     // Craft ethernet packets.
+    unsigned char* sendbuff = malloc(64);
+    memset(sendbuff, 0, 64);
+
+    struct ethhdr *eth = (struct ethhdr*) (sendbuff);
+
+    printf("Source MAC: ");
+    for (int i = 0; i < 6; i++) {
+        eth->h_source[i] = (unsigned char) (iface.mac[i]);
+        printf("%.2x ", eth->h_source[i]);
+    }
+    printf("\n");
+
+    printf("Destination MAC: ");
+    for (int i = 0; i < 6; i++) {
+        eth->h_dest[i] = 0xff;
+        printf("%.2x ", eth->h_dest[i]);
+    }
+    printf("\n");
+
+    eth->h_proto = htons(ETH_P_IP);
+
+    int total_len = sizeof(struct ethhdr);
+
+    struct sockaddr_ll sadr_ll;
+    sadr_ll.sll_ifindex = iface.index;
+    sadr_ll.sll_halen = ETH_ALEN;
+    for (int i = 0; i < 6; i++) {
+        sadr_ll.sll_addr[i] = 0xff;
+    }
+
+    printf("sending...\n");
+    int send_len = sendto(raw_sock, sendbuff, 64, 0, (const struct sockaddr*) &sadr_ll, sizeof(struct sockaddr_ll));
+
+    free(sendbuff);
 
     close(raw_sock);
 
