@@ -4,6 +4,9 @@
 #include "../include/get_raw_socket.h"
 #include "../include/get_and_print_iface_info.h"
 
+void create_eth_header(struct iface_info* iface, unsigned char* sendbuff);
+void send_packet(int raw_sock, struct iface_info* iface, unsigned char* sendbuff); 
+
 int main(int argc, char* argv[]) {
     
     char* iface_arg = argv[1]; // Need to validate
@@ -11,48 +14,44 @@ int main(int argc, char* argv[]) {
     int raw_sock = get_raw_socket();
     struct iface_info iface;
     strncpy(iface.name, iface_arg, strlen(iface_arg)+1);
-
     get_and_print_iface_info(raw_sock, &iface);
 
-    // Craft ethernet packets.
     unsigned char* sendbuff = malloc(64);
     memset(sendbuff, 0, 64);
+    create_eth_header(&iface, sendbuff); 
+    send_packet(raw_sock, &iface, sendbuff);
+    free(sendbuff);
 
+    close(raw_sock);
+
+    return 0;
+
+}
+
+void create_eth_header(struct iface_info* iface, unsigned char* sendbuff) {
+    
     struct ethhdr *eth = (struct ethhdr*) (sendbuff);
-
-    printf("Source MAC: ");
     for (int i = 0; i < 6; i++) {
-        eth->h_source[i] = (unsigned char) (iface.mac[i]);
-        printf("%.2x ", eth->h_source[i]);
+        eth->h_source[i] = (unsigned char) (iface->mac[i]);
     }
-    printf("\n");
-
-    printf("Destination MAC: ");
     for (int i = 0; i < 6; i++) {
         eth->h_dest[i] = 0xff;
-        printf("%.2x ", eth->h_dest[i]);
     }
-    printf("\n");
-
     eth->h_proto = htons(ETH_P_IP);
 
-    int total_len = sizeof(struct ethhdr);
+}
 
+void send_packet(int raw_sock, struct iface_info* iface, unsigned char* sendbuff) {
+    
     struct sockaddr_ll sadr_ll;
-    sadr_ll.sll_ifindex = iface.index;
+    sadr_ll.sll_ifindex = iface->index;
     sadr_ll.sll_halen = ETH_ALEN;
     for (int i = 0; i < 6; i++) {
         sadr_ll.sll_addr[i] = 0xff;
     }
 
     printf("sending...\n");
-    int send_len = sendto(raw_sock, sendbuff, 64, 0, (const struct sockaddr*) &sadr_ll, sizeof(struct sockaddr_ll));
-
-    free(sendbuff);
-
-    close(raw_sock);
-
-    return 0;
+    sendto(raw_sock, sendbuff, 64, 0, (const struct sockaddr*) &sadr_ll, sizeof(struct sockaddr_ll));
 
 }
 
